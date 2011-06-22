@@ -65,7 +65,7 @@
 	<distributionManagement>
 		<site>
 			<id>www.jemos.eu/maven-jemosProtoc-plugin</id>
-			<url>scp://tedonema@thor/home/tedonema/runtime/www/projects/jemos-maven-plugins/maven-jemosProtoc-plugin</url>
+			<url>scp://tedonema@ubuntu/home/tedonema/runtime/www/projects/jemos-maven-plugins/maven-jemosProtoc-plugin</url>
 		</site>
 	</distributionManagement>
 
