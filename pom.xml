@@ -10,7 +10,7 @@
 
 	<groupId>uk.co.jemos.maven.plugins</groupId>
 	<artifactId>maven-jemosProtoc-plugin</artifactId>
-	<version>0.0.1.RELEASE</version>
+	<version>0.0.2.RELEASE</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>maven-jemosProtoc-plugin</name>
@@ -168,5 +168,10 @@
 			<artifactId>maven-plugin-api</artifactId>
 			<version>2.0.9</version>
 		</dependency>
+		<dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.9</version>
+        </dependency>
 	</dependencies>
 </project>

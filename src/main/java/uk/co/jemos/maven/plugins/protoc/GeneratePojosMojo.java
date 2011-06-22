@@ -2,13 +2,16 @@ package uk.co.jemos.maven.plugins.protoc;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 
 import uk.co.jemos.maven.plugins.utils.JemosProtocPluginUtils;
 
@@ -22,6 +25,23 @@ import uk.co.jemos.maven.plugins.utils.JemosProtocPluginUtils;
  * @requiresDependencyResolution compile
  */
 public class GeneratePojosMojo extends AbstractMojo {
+
+	/**
+	 * The current Maven project.
+	 * 
+	 * @parameter default-value="${project}"
+	 * @readonly
+	 * @required
+	 */
+	protected MavenProject project;
+
+	/**
+	 * A helper used to add resources to the project.
+	 * 
+	 * @component
+	 * @required
+	 */
+	protected MavenProjectHelper projectHelper;
 
 	/**
 	 * Location of the file.
@@ -46,14 +66,6 @@ public class GeneratePojosMojo extends AbstractMojo {
 	 * 
 	 */
 	private String protocExecutable;
-
-	private final FilenameFilter PROTO_FILENAME_FILTER = new FilenameFilter() {
-
-		public boolean accept(File dir, String name) {
-
-			return name.endsWith(JemosProtocPluginUtils.PROTO_SUFFIX);
-		}
-	};
 
 	public void execute() throws MojoExecutionException {
 
@@ -103,6 +115,14 @@ public class GeneratePojosMojo extends AbstractMojo {
 
 			getLog().info("Command: " + buff.toString() + " executed successfully.");
 
+			project.addCompileSourceRoot(outputFolder.getAbsolutePath());
+			getLog().info("Folder: " + outputFolderPath + " added to the compile source root");
+
+			List<String> excludes = null;
+			List<String> includes = Collections.singletonList("**/*.proto");
+			projectHelper.addResource(project, inputFolderPath, includes, excludes);
+			getLog().info("Added .proto files as resources...");
+
 		} catch (IOException e) {
 			throw new MojoExecutionException(
 					"An error occurred while executing the protoc command", e);
@@ -115,4 +135,5 @@ public class GeneratePojosMojo extends AbstractMojo {
 		}
 
 	}
+
 }

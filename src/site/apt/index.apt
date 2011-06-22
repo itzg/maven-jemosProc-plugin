@@ -1,0 +1,66 @@
+	---------------------
+	Protomak Maven Plugin
+	---------------------
+	Marco Tedone
+	---------------------
+	
+How to use Jemos Protoc Plugin
+
+   To use the Jemos Protoc Plugin you can define a POM like the following: 
+
++----------------------------------------------------------------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>uk.co.jemos.test</groupId>
+  <artifactId>maven-protoc-plugin-test</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>maven-protoc-plugin-test</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>uk.co.jemos.maven.plugins</groupId>
+        <artifactId>maven-jemosProtoc-plugin</artifactId>
+        <version>0.0.2.RELEASE</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generatePojos</goal>
+            </goals>
+            <configuration>
+              <inputFolder>C:/temp</inputFolder>
+              <outputFolder>C:/temp/foo</outputFolder>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>    
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>2.4.0a</version>
+    </dependency>
+  </dependencies>
+</project>
+
++----------------------------------------------------------------------------
+
+  It's important that always declare the very latest version of the protobuf-java dependency
+  
+  The plugin will scan <inputFolder> for .proto files and will write output to <outputFolder>. 
+  Additionally the generate java code will be added to the compile classpath.   
+  
