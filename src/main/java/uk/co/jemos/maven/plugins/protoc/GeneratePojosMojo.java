@@ -66,6 +66,12 @@ public class GeneratePojosMojo extends AbstractMojo {
 	 * 
 	 */
 	private String protocExecutable;
+	
+	/**
+	 * The ant-style file pattern to pick up the proto resource files.
+	 * @parameter expression="${resourcePattern}" default-value="\\*\\*\\/*.proto"
+	 */
+	private String resourcePattern;
 
 	public void execute() throws MojoExecutionException {
 
@@ -93,27 +99,39 @@ public class GeneratePojosMojo extends AbstractMojo {
 
 		getLog().info(buff.toString());
 
-		buff.setLength(0);
-
-		buff.append(protocExecutable).append(" --proto_path=").append(inputFolderPath).append(" ")
-				.append(inputFolderPath).append("*.proto ").append("--java_out=")
-				.append(outputFolderPath);
-
-		getLog().info("Will execute: " + buff.toString());
+		List<String> cmdList = new ArrayList<String>();
+		cmdList.add(protocExecutable);
+		cmdList.add("--proto_path="+inputFolderPath);
+		cmdList.add("--java_out="+outputFolderPath);
+		File[] protoFiles = new File(inputFolderPath).listFiles(new FilenameFilter() {
+			
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".proto");
+			}
+		});
+		for (File protoFile : protoFiles) {
+			cmdList.add(protoFile.getPath());
+		}
+		
+		getLog().debug("Will execute: " + cmdList);
 
 		BufferedReader reader = null;
 
 		try {
 
-			Process p = Runtime.getRuntime().exec(buff.toString());
-			p.waitFor();
+			Process p = Runtime.getRuntime().exec(cmdList.toArray(new String[]{}));
+			int exitValue = p.waitFor();
 			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				getLog().info(line);
 			}
+			
+			if (exitValue != 0) {
+				throw new MojoExecutionException("Executing "+cmdList.get(0)+" failed with exit value "+exitValue);
+			}
 
-			getLog().info("Command: " + buff.toString() + " executed successfully.");
+			getLog().info("Command: " + cmdList.get(0) + " executed sucsessfully");
 
 			project.addCompileSourceRoot(outputFolder.getAbsolutePath());
 			getLog().info("Folder: " + outputFolderPath + " added to the compile source root");
